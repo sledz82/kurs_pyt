@@ -226,7 +226,7 @@ class WykresCanvas(FigureCanvas):
                     summ += float(entry[5])
                     vall.append(float(entry[5]))
         vall.append(float(win.lineE_cash.text()))
-        sum+=float(win.lineE_cash.text())
+        summ+=float(win.lineE_cash.text())
         for ii in vall:
             sizes.append(ii * 100 / summ)
         explode = (0.15,0)
