@@ -14,8 +14,12 @@ import pandas as pd
 
 dataDB=[]
 f_path=os.getcwd()
+if "win" in sys.platform:
+    sepa="\\"
+else:
+    sepa="/"
 # Connect to an SQLite database (or create it if it doesn't exist)
-conn = sqlite3.connect(f_path+'\\mBnk.db')
+conn = sqlite3.connect(f_path+sepa+'mBnk.db')
 curs = conn.cursor()
 
 
@@ -116,7 +120,7 @@ def expo():
     data=curs.execute("SELECT * FROM aktywa")
     c_date = datetime.now()
     f_date = c_date.strftime("%d-%m-%Y_%H_%M")
-    file2 = f_path+'\\db' + f_date + '.csv'
+    file2 = f_path+sepa+'db' + f_date + '.csv'
     with open(file2, 'w', newline='') as f:
         writer = csv.writer(f,delimiter=';')
         writer.writerow(['ID', 'DATA','Kurs','Wolumen','Waluta','Wartość','Ticker','Nazwa'])
@@ -448,7 +452,7 @@ class MainWindow(QMainWindow):
            Reads data from 'additional' file
            :return: None
            """
-        file2 = f_path + '\\dane.txt'
+        file2 = f_path + sepa+'dane.txt'
         with open(file2, 'r', newline='\n') as f:
             r_lines = f.readlines()#.split(';')
             first_line=r_lines[0].strip()
@@ -468,7 +472,7 @@ class MainWindow(QMainWindow):
         Writes data to 'additional' file
         :return: None
         """
-        file2 = f_path + '\\dane.txt'
+        file2 = f_path + sepa+'dane.txt'
         wplaty=str(round(get_cash(),2))
         with open(file2, 'a', encoding="utf-8",newline='') as f:
             if self.lineE_cash.text()!=self.cash:

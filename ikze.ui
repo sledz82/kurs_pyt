@@ -10,7 +10,7 @@
     <height>410</height>
    </rect>
   </property>
-  <property name="palette">
+  <!--property name="palette">
    <palette>
     <active>
      <colorrole role="Button">
@@ -46,7 +46,7 @@
      </colorrole>
     </disabled>
    </palette>
-  </property>
+  </property-->
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
