@@ -29,10 +29,10 @@ def get_cash():
        :return: float [sum]
        """
     curs.execute("SELECT * from aktywa where ticker=\"cash\"")
-    sum=0
+    summ=0
     for ii in curs:
-        sum+=float(ii[2])
-    return round(sum,2)
+        summ+=float(ii[2])
+    return round(summ,2)
 
 def getCur(cur,oper):
     """
@@ -218,17 +218,17 @@ class WykresCanvas(FigureCanvas):
         labe.append('PLN')
         vall = []
         sizes = []
-        sum = 0
+        summ = 0
         for tic in ticKERS:
             if tic!="cash":
                 curs.execute("SELECT * from aktywa where ticker=\"" + str(tic) + "\" ORDER BY id DESC LIMIT 1")
                 for entry in curs:
-                    sum += float(entry[5])
+                    summ += float(entry[5])
                     vall.append(float(entry[5]))
         vall.append(float(win.lineE_cash.text()))
         sum+=float(win.lineE_cash.text())
         for ii in vall:
-            sizes.append(ii * 100 / sum)
+            sizes.append(ii * 100 / summ)
         explode = (0.15,0)
         for i in range(len(sizes)-2):
             explode=explode+(0,)
@@ -644,8 +644,8 @@ class MainWindow(QMainWindow):
             self.lineE_name.setText(entry[7].strip('\'')[2:])
             self.lineE_tick.setText(entry[6].strip('\'')[2:])
             self.lineE_vol.setText(entry[3].strip())
-        sum=get_cash()
-        self.lineE_paid.setText(str(round(sum,2)))
+        summ=get_cash()
+        self.lineE_paid.setText(str(round(summ,2)))
         c_date = datetime.now()
         f_date = c_date.strftime("%d-%m-%Y %H:%M")
         self.lineE_data.setText(f_date)
