@@ -1,8 +1,9 @@
+import matplotlib.pyplot as plt
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QFont, QColor, QBrush
 from PyQt5.QtWidgets import QApplication,QMessageBox,QMainWindow,QWidget,QVBoxLayout
-from datetime import datetime
+from datetime import datetime, timedelta
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import sqlite3
 import os,sys
@@ -11,6 +12,7 @@ import yfinance as yf
 import requests
 from matplotlib.figure import Figure
 import pandas as pd
+
 
 dataDB=[]
 f_path=os.getcwd()
@@ -26,7 +28,7 @@ curs = conn.cursor()
 def get_cash():
     """
        Get all cash entries from dB and add them
-       :return: float [sum]
+       :return: float [summ]
        """
     curs.execute("SELECT * from aktywa where ticker=\"cash\"")
     summ=0
@@ -188,8 +190,40 @@ class WykresCanvas(FigureCanvas):
         self.setParent(parent)
         if a=="1":
             self.plot_chart()
-        else:
+        elif a=="2":
             self.draw_pie()
+        else:
+            tic=win.comboBox_2.currentText()
+            per=win.comboBox_3.currentIndex()
+            if tic=="cash":
+                print("Nie ma danych dla gotówki")
+            else:
+                self.hist(per,tic)
+
+    def hist(self,period,tick):
+        """
+        Plots historical close price for ticker in given period
+        :return: None
+       """
+        end=datetime.today()
+        if period==0:
+            dt = timedelta(days=7)
+        elif period==1:
+            dt=timedelta(weeks=4)
+        elif period==2:
+            dt = timedelta(weeks=12)
+        elif period == 3:
+            dt = timedelta(weeks=26)
+        elif period == 4:
+            dt=timedelta(weeks=52)
+        start=end-dt
+        data=yf.download(tick,start=start,end=end)
+        ax = self.fig.add_subplot(111)
+        ax.plot(data['Close'], color='green', label=tick)
+        ax.set_title("Cena zamknięcia "+tick)
+        ax.set_xlabel("Data")
+        ax.set_ylabel("Kurs")
+        ax.grid(True)
 
     def chart_data(self,ticF, typD):
         """
@@ -231,7 +265,7 @@ class WykresCanvas(FigureCanvas):
             sizes.append(ii * 100 / summ)
         explode = (0.15,0)
         for i in range(len(sizes)-2):
-            explode=explode+(0,)
+            explode=explode+(0.1,)
         ax = self.fig.add_subplot(211)
         ax.pie(sizes, explode=explode, labels=ticKERS, autopct='%1.1f%%',
                shadow=True, startangle=140)
@@ -347,7 +381,10 @@ def compare_rate(tic):
     start = curs.fetchone()
     curs.execute("SELECT curs from aktywa where ticker=\"" + tic + "\" ORDER BY id DESC")
     last = curs.fetchone()
-    divide=last[0]/start[0]
+    if start[0]!=0:
+        divide=last[0]/start[0]
+    else:
+        divide=1
     f_begin=round(100 * (divide - 1), 3) #change in percent from begin
     curs.execute("SELECT curs from aktywa where ticker=\"" + tic + "\" ORDER BY id DESC LIMIT 2 ")
     change=curs.fetchall()
@@ -627,6 +664,7 @@ class MainWindow(QMainWindow):
         self.b_wyk.clicked.connect(lambda: self.open_chart("1"))
         self.b_udzial.clicked.connect(lambda: self.open_chart("2"))
         self.b_del.clicked.connect(self.del_entry)
+        self.b_hist.clicked.connect(lambda: self.open_chart("3"))
         self.b_update.clicked.connect(self.update_entry)
         self.b_odsw.clicked.connect(self.up_cur)
         self.b_stats.clicked.connect(self.stats)

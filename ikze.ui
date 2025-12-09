@@ -10,43 +10,6 @@
     <height>410</height>
    </rect>
   </property>
-  <!--property name="palette">
-   <palette>
-    <active>
-     <colorrole role="Button">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>170</red>
-        <green>255</green>
-        <blue>0</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </active>
-    <inactive>
-     <colorrole role="Button">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>170</red>
-        <green>255</green>
-        <blue>0</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </inactive>
-    <disabled>
-     <colorrole role="Button">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>170</red>
-        <green>255</green>
-        <blue>0</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </disabled>
-   </palette>
-  </property-->
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -644,6 +607,54 @@
      <string>Wynik</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="b_hist">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>283</y>
+      <width>51</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Historia</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_3">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>284</y>
+      <width>70</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>7dni</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>1msc</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>3msc</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>6msc</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>rok</string>
+     </property>
+    </item>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -651,7 +662,7 @@
      <x>0</x>
      <y>0</y>
      <width>854</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
