@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QFont, QColor, QBrush
@@ -13,7 +12,6 @@ import requests
 from matplotlib.figure import Figure
 import pandas as pd
 
-
 dataDB=[]
 f_path=os.getcwd()
 if "win" in sys.platform:
@@ -23,7 +21,6 @@ else:
 # Connect to an SQLite database (or create it if it doesn't exist)
 conn = sqlite3.connect(f_path+sepa+'mBnk.db')
 curs = conn.cursor()
-
 
 def get_cash():
     """
@@ -57,7 +54,6 @@ def getCur(cur,oper):
         elif cur == "EUR":
             url = "https://api.nbp.pl/api/exchangerates/rates/C/EUR/last/1/?format=json"
     response = requests.get(url)
-
     if response.status_code == 200:
         data = response.json()
         if oper=="buy":
@@ -217,7 +213,7 @@ class WykresCanvas(FigureCanvas):
         elif period == 4:
             dt=timedelta(weeks=52)
         start=end-dt
-        data=yf.download(tick,start=start,end=end)
+        data=yf.download(tick,start=start,end=end,progress=False,auto_adjust=True)
         ax = self.fig.add_subplot(111)
         ax.plot(data['Close'], color='green', label=tick)
         ax.set_title("Cena zamknięcia "+tick)
@@ -481,7 +477,6 @@ class MainWindow(QMainWindow):
                 item.setFont(font)
                 self.tabela.setItem(row, 8, item)
             row = row + 1
-
         self.lineE_suma.setText(str(round(suma,2)))
 
     def open_f(self):
@@ -545,7 +540,6 @@ class MainWindow(QMainWindow):
         index = int(self.lineE_id.text())
         reply = QMessageBox.question(self, "Pytanie", f"Czy usunąć wpis nr {index}?", QMessageBox.Yes | QMessageBox.No,
                                      QMessageBox.No)
-
         if reply == QMessageBox.Yes:
             delete(index)
             conn.commit()
@@ -723,7 +717,6 @@ else:
 suma="Wynik:" + str(round(res*100,2))+ "%, " + str(netto)
 win.label_wynik.setText(suma)
 total=float(win.lineE_cash.text())+float(win.lineE_suma.text())-float(win.lineE_cost.text())
-
 win.lineE_all.setText(str(round(total,2)))
 try:
     sys.exit(app.exec_())
