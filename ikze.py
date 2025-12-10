@@ -94,7 +94,7 @@ def get_rate(tic,curr):
     data = ticker.history(period="1d")
     if data.empty:
         print("Brak danych – upewnij się, że symbol jest poprawny.")
-        QMessageBox.warning(None, "Ostrzeżenie", f"Nieporawny symbol tickera: {tic}",QMessageBox.Yes | QMessageBox.No,QMessageBox.No)
+        QMessageBox.warning(None, "Ostrzeżenie", f"Niepoprawny symbol tickera: {tic}",QMessageBox.Yes | QMessageBox.No,QMessageBox.No)
         return 1
     current_price = data["Close"].iloc[-1]
     if tic=="SGLN.L":
@@ -122,8 +122,6 @@ def expo():
     with open(file2, 'w', newline='') as f:
         writer = csv.writer(f,delimiter=';')
         writer.writerow(['ID', 'DATA','Kurs','Wolumen','Waluta','Wartość','Ticker','Nazwa'])
-        #writer.writerows(data)
-
         for ii in data:
             line=[]
             line.append(str(ii[0]))
@@ -286,7 +284,6 @@ class WykresCanvas(FigureCanvas):
             df2['date'] = pd.to_datetime(df2['date'], format="%d-%m-%Y %H:%M")
             df2['val'] = pd.to_numeric(df2['val'])
             ax.bar(df2['date'], df2['val'], width=4.45, color='lightblue', label=ticc + " wartość")
-
         elif typ2 == "Oba":
             dataCh = self.chart_data(ticc, "Kurs")
             df = pd.DataFrame(dataCh)
@@ -297,7 +294,6 @@ class WykresCanvas(FigureCanvas):
             df2['date'] = pd.to_datetime(df2['date'], format="%d-%m-%Y %H:%M")
             df2['val'] = pd.to_numeric(df2['val'])
             ax.bar(df2['date'], df2['val'], width=0.15, color='lightblue', label=ticc + " wartość")
-
             ax2=ax.twinx()
             ax2.plot(df['date'], df['val'], marker='o', color='green', label=ticc + " kurs")
             lin1,lab1=ax.get_legend_handles_labels()
@@ -392,12 +388,10 @@ def compare_rate(tic):
         divide=current[0]/current[1]
     return [f_begin,round(100*(divide-1), 3)]
 
-
 class MainWindow(QMainWindow):
     """
     MainWindow Class responsible for GUI operation
     """
-
     def get_last_id(self):
         """
            Gets last entry from dB
@@ -566,6 +560,8 @@ class MainWindow(QMainWindow):
         msg=f"Statystyki dla {data_combine[0]}:Kurs[{data_combine[1]}]\nPoczątek data:{data_beg[0]},watość: {str(data_beg[1])}\nMin data:{datmin[0]},watość: {str(datmin[1])}\nMax data:{datmax[0]},watość: {str(datmax[1])}\naktualna data:{data_cur[0]},watość: {str(data_cur[1])}"
         delta=100*(round(data_cur[1]/data_beg[1]-1,3))
         msg+=f"\nRóżnica od początku:{str(round(delta,2))}%"
+        #recom=yf.Ticker(tick).recommendations
+        #msg+="\nRekomendacja:\n"+str(recom)
         QMessageBox.information(None, "Informacja", msg, QMessageBox.Ok)
 
     def update_entry(self):
@@ -668,7 +664,6 @@ class MainWindow(QMainWindow):
         self.opened_windows = []
         self.comboBox_2.addItems(get_tickers())
         entry=self.get_last_id()
-        #print(entry)
         if entry[0]!='(None':
             self.lineE_id.setText(entry[0][1:])
             self.lineE_cur.setText(entry[4].strip('\'')[2:])
@@ -700,7 +695,6 @@ win = MainWindow()
 widget = QtWidgets.QStackedWidget()
 widget.addWidget(win)
 widget.setWindowTitle('IKZE manager')
-
 widget.setFixedHeight(400)
 widget.setFixedWidth(850)
 widget.show()
