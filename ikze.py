@@ -487,7 +487,7 @@ class MainWindow(QMainWindow):
         file2 = f_path + sepa+'dane.txt'
         with open(file2, 'r', newline='\n') as f:
             r_lines = f.readlines()#.split(';')
-            first_line=r_lines[0].strip()
+            first_line=r_lines[0].split(';')
             last_line=r_lines[-1].split(';')
             dat = last_line[0]
             value = last_line[1]
@@ -497,7 +497,7 @@ class MainWindow(QMainWindow):
             self.lineE_cash.setText(value)
             self.lineE_cost.setText(oplaty)
             self.label_cash.setText(f"Gotówka(stan na {dat})")
-            self.label_limit.setText(f"Limit wpłat na rok {str(datetime.now().year)}={first_line}")
+            self.label_limit.setText(f"Limit wpłat na rok {first_line[0]}={first_line[1].strip()}")
 
     def save_f(self):
         """
@@ -646,11 +646,11 @@ class MainWindow(QMainWindow):
         self.b_stats.setStyleSheet("background-color: #938bff")
         self.tabela.setColumnWidth(0,12)
         self.tabela.setColumnWidth(1, 115)
-        self.tabela.setColumnWidth(2, 93)
+        self.tabela.setColumnWidth(2, 98)
         self.tabela.setColumnWidth(3, 205)
         self.tabela.setColumnWidth(4, 48)
-        self.tabela.setColumnWidth(5, 48)
-        self.tabela.setColumnWidth(6, 30)
+        self.tabela.setColumnWidth(5, 56)
+        self.tabela.setColumnWidth(6, 39)
         self.tabela.setColumnWidth(7, 55)
         self.tabela.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.list_()
