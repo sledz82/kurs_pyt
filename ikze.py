@@ -253,7 +253,8 @@ class WykresCanvas(FigureCanvas):
                 for entry in curs:
                     summ += float(entry[5])
                     vall.append(float(entry[5]))
-        vall.append(float(win.lineE_cash.text()))
+            else:
+                vall.append(float(win.lineE_cash.text()))
         summ+=float(win.lineE_cash.text())
         for ii in vall:
             sizes.append(ii * 100 / summ)
