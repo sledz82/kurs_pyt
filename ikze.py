@@ -401,6 +401,27 @@ class MainWindow(QMainWindow):
         curs.execute("SELECT *,max(id) from aktywa")
         return str(curs.fetchone()).split(',')
 
+    def sell(self,tic):
+        """
+           Removes all entries for given ticker from dB
+           :return: Str
+           """
+        sel_row = self.tabela.currentRow()
+        item_val = self.tabela.item(sel_row, 7).text()
+
+
+        reply = QMessageBox.question(self, "Pytanie", f"Czy sprzedać {tic}?", QMessageBox.Yes | QMessageBox.No,
+                                     QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            curs.execute("DELETE FROM aktywa WHERE ticker =\"" + tic + "\"")
+            conn.commit()
+            self.lineE_pay.setText(item_val)
+            self.list_()
+            return str(curs.fetchone())
+        else:
+            return
+
+
     def up_cur(self):
         """
            Updates (commits to dB) all tickers, also updates the GUI
@@ -576,7 +597,7 @@ class MainWindow(QMainWindow):
         n_currency = self.lineE_cur.text()
         ij = int(self.lineE_id.text())
         tick=self.lineE_tick.text()
-        n_curs = get_rate(tick,n_currency) #float(self.lineE_curs.text())
+        n_curs = float(self.lineE_curs.text())
         if n_currency == "USD":
             ff = getCur("USD","sell")
         elif n_currency == "EUR":
@@ -660,6 +681,7 @@ class MainWindow(QMainWindow):
         self.b_odsw.clicked.connect(self.up_cur)
         self.b_stats.clicked.connect(self.stats)
         self.b_expo.clicked.connect(expo)
+        self.b_sell.clicked.connect(lambda:self.sell(self.lineE_tick.text()))
         self.b_payin.clicked.connect(self.deposit)
         self.tabela.clicked.connect(self.update_gui_by_row)
         self.opened_windows = []
