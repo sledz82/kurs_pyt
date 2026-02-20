@@ -401,6 +401,22 @@ class MainWindow(QMainWindow):
         curs.execute("SELECT *,max(id) from aktywa")
         return str(curs.fetchone()).split(',')
 
+    def get_vol(self,tic):
+        """
+           Gets last entry from dB
+           :return: Str
+           """
+        #quer = f"SELECT *, LAG(vol) OVER (ORDER BY id) AS prev_wol FROM aktywa WHERE ticker=\"{tic}\"" # and (prev_wol IS NULL OR vol <> prev_wol);"
+        quer=f"SELECT vol,curs FROM (SELECT *,LAG(vol) OVER (ORDER BY ticker) AS prev_wol FROM aktywa) WHERE (prev_wol IS NULL OR ABS(vol - prev_wol) > 0.01) AND ticker=\"{tic}\""
+        curs.execute(quer) #"SELECT DISTINCT vol,curs from aktywa where ticker=\"" + tic + "\" ORDER BY vol DESC LIMIT 2")
+        ss=curs.fetchall()
+        ini=ss[0][0]*ss[0][1]
+        vall=ini
+        for i in range(len(ss)-1):
+            siz=ss[i+1][0]-ss[i][0]
+            vall+=siz*ss[i+1][1]
+        return str(round(vall,2))
+
     def sell(self,tic):
         """
            Removes all entries for given ticker from dB
@@ -575,13 +591,23 @@ class MainWindow(QMainWindow):
         datmax = data.fetchone()
         data = curs.execute("SELECT date,curs FROM aktywa where ticker=\"" + tick + "\" ORDER BY ID ASC LIMIT 1")
         data_beg = data.fetchone()
-        data = curs.execute("SELECT date,curs FROM aktywa where ticker=\"" + tick + "\" ORDER BY ID DESC LIMIT 1")
+        data = curs.execute("SELECT date,curs,vol FROM aktywa where ticker=\"" + tick + "\" ORDER BY ID DESC LIMIT 1")
         data_cur = data.fetchone()
         data = curs.execute("SELECT DISTINCT(name),walut FROM aktywa where ticker=\"" + tick + "\"")
         data_combine = data.fetchone()
         msg=f"Statystyki dla {data_combine[0]}:Kurs[{data_combine[1]}]\nPoczątek data:{data_beg[0]},watość: {str(data_beg[1])}\nMin data:{datmin[0]},watość: {str(datmin[1])}\nMax data:{datmax[0]},watość: {str(datmax[1])}\naktualna data:{data_cur[0]},watość: {str(data_cur[1])}"
         delta=100*(round(data_cur[1]/data_beg[1]-1,3))
         msg+=f"\nRóżnica od początku:{str(round(delta,2))}%"
+        if tick!='cash':
+            buyr=self.get_vol(tick)
+            brf=float(buyr)
+            roz=data_cur[2]*data_cur[1]-brf
+            curr=data_combine[1]
+            valu=""
+            if curr!="PLN":
+                calc=roz*getCur(curr,'sell')
+                valu+=str(round(calc,2))
+            msg+=f"\nKOSZT ZAKUPU: {buyr} {curr}\nRóżnica: {roz:.2f} {curr}, warte: {valu}"
         #recom=yf.Ticker(tick).recommendations
         #msg+="\nRekomendacja:\n"+str(recom)
         QMessageBox.information(None, "Informacja", msg, QMessageBox.Ok)
