@@ -39,7 +39,7 @@ def getCur(cur,oper):
        :return: float [rate]
        """
     url=''
-    if oper=="buy":
+    '''if oper=="buy":
         if cur=="USD":
             url = "https://api.nbp.pl/api/exchangerates/rates/C/USD/last/1/?format=json"
         elif cur == "GBP":
@@ -53,13 +53,21 @@ def getCur(cur,oper):
             url = "https://api.nbp.pl/api/exchangerates/rates/C/GBP/last/1/?format=json"
         elif cur == "EUR":
             url = "https://api.nbp.pl/api/exchangerates/rates/C/EUR/last/1/?format=json"
+    '''
+    if cur=="USD":
+        url="https://api.nbp.pl/api/exchangerates/rates/c/USD/"
+    elif cur=="EUR":
+        url="https://api.nbp.pl/api/exchangerates/rates/c/EUR/"
+    elif cur=="GBP":
+        url="https://api.nbp.pl/api/exchangerates/rates/c/GBP/"
+
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
         if oper=="buy":
-            rate = data['rates'][0]['ask']
+            rate = data['rates'][-1]['ask']
         else:
-            rate = data['rates'][0]['bid']
+            rate = data['rates'][-1]['bid']
         print(f"Rate {oper} {cur}: {rate}")
         return round(rate,4)
     else:
@@ -510,6 +518,18 @@ class MainWindow(QMainWindow):
                 item=QtWidgets.QTableWidgetItem("[ ]")
                 item.setFont(font)
                 self.tabela.setItem(row, 8, item)
+            if dBB["ticker"]!='cash':
+                elem = self.get_vol(dBB["ticker"])
+                font = QFont()
+                font.setBold(True)
+                change = float(dBB["vol"])*float(dBB["curs"])-float(elem[0])
+                item0 = QtWidgets.QTableWidgetItem(str(round(change,2))+" "+dBB["cur"])
+                item0.setFont(font)
+                if change >= 0:
+                    item0.setForeground(QBrush(QColor("green")))
+                else:
+                    item0.setForeground(QBrush(QColor("red")))
+                self.tabela.setItem(row, 9,item0)
             row = row + 1
         self.lineE_suma.setText(str(round(suma,2)))
 

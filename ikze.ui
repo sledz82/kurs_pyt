@@ -214,6 +214,11 @@
       <string>Zmiana</string>
      </property>
     </column>
+    <column>
+     <property name="text">
+      <string>Zysk</string>
+     </property>
+    </column>
    </widget>
    <widget class="QPushButton" name="b_add">
     <property name="geometry">
