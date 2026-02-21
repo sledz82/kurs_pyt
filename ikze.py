@@ -407,15 +407,17 @@ class MainWindow(QMainWindow):
            :return: Str
            """
         #quer = f"SELECT *, LAG(vol) OVER (ORDER BY id) AS prev_wol FROM aktywa WHERE ticker=\"{tic}\"" # and (prev_wol IS NULL OR vol <> prev_wol);"
-        quer=f"SELECT vol,curs FROM (SELECT *,LAG(vol) OVER (ORDER BY ticker) AS prev_wol FROM aktywa) WHERE (prev_wol IS NULL OR ABS(vol - prev_wol) > 0.01) AND ticker=\"{tic}\""
+        quer=f"SELECT vol,curs,date FROM (SELECT *,LAG(vol) OVER (ORDER BY ticker) AS prev_wol FROM aktywa) WHERE (prev_wol IS NULL OR ABS(vol - prev_wol) > 0.01) AND ticker=\"{tic}\""
         curs.execute(quer) #"SELECT DISTINCT vol,curs from aktywa where ticker=\"" + tic + "\" ORDER BY vol DESC LIMIT 2")
         ss=curs.fetchall()
         ini=ss[0][0]*ss[0][1]
+        inid=str(ss[0][2])+" "+str(ss[0][0])+"; "
         vall=ini
         for i in range(len(ss)-1):
             siz=ss[i+1][0]-ss[i][0]
             vall+=siz*ss[i+1][1]
-        return str(round(vall,2))
+            inid+=str(ss[i+1][2])+" "+str(siz)+"; "
+        return [str(round(vall,2)),inid]
 
     def sell(self,tic):
         """
@@ -600,14 +602,14 @@ class MainWindow(QMainWindow):
         msg+=f"\nRóżnica od początku:{str(round(delta,2))}%"
         if tick!='cash':
             buyr=self.get_vol(tick)
-            brf=float(buyr)
+            brf=float(buyr[0])
             roz=data_cur[2]*data_cur[1]-brf
             curr=data_combine[1]
             valu=""
             if curr!="PLN":
                 calc=roz*getCur(curr,'sell')
                 valu+=str(round(calc,2))
-            msg+=f"\nKOSZT ZAKUPU: {buyr} {curr}\nRóżnica: {roz:.2f} {curr}, warte: {valu}"
+            msg+=f"\nKOSZT ZAKUPU: {buyr[0]} {curr}\nRóżnica: {roz:.2f} {curr}, warte: {valu}\n{buyr[1]}"
         #recom=yf.Ticker(tick).recommendations
         #msg+="\nRekomendacja:\n"+str(recom)
         QMessageBox.information(None, "Informacja", msg, QMessageBox.Ok)
