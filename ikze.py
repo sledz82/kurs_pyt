@@ -314,6 +314,8 @@ class WykresCanvas(FigureCanvas):
             df['date'] = pd.to_datetime(df['date'], format="%d-%m-%Y %H:%M")
             df['val'] = pd.to_numeric(df['val'])
             ax.plot(df['date'], df['val'], marker='o', color='green', label=ticc)
+            for i in range(len(df)):
+                ax.text(df['date'][i], df['val'][i], f"{df['val'][i]}")
             ax.legend()
             if typ2=="Kurs":
                 beg_val, c_val = compare_rate(ticc)
@@ -411,7 +413,7 @@ class MainWindow(QMainWindow):
 
     def get_vol(self,tic):
         """
-           Gets last entry from dB
+           Gets total buy cost of given ticker plus description containing dates of aquizition from dB
            :return: Str
            """
         #quer = f"SELECT *, LAG(vol) OVER (ORDER BY id) AS prev_wol FROM aktywa WHERE ticker=\"{tic}\"" # and (prev_wol IS NULL OR vol <> prev_wol);"
@@ -766,7 +768,7 @@ widget = QtWidgets.QStackedWidget()
 widget.addWidget(win)
 widget.setWindowTitle('IKZE manager')
 widget.setFixedHeight(400)
-widget.setFixedWidth(870)
+widget.setFixedWidth(880)
 widget.show()
 win.open_f()
 netto=round(float(win.lineE_suma.text())-float(win.lineE_paid.text()),2)
