@@ -11,6 +11,7 @@ import yfinance as yf
 import requests
 from matplotlib.figure import Figure
 import pandas as pd
+import numpy
 
 dataDB=[]
 f_path=os.getcwd()
@@ -221,11 +222,29 @@ class WykresCanvas(FigureCanvas):
         start=end-dt
         data=yf.download(tick,start=start,end=end,progress=False,auto_adjust=True)
         ax = self.fig.add_subplot(111)
-        ax.plot(data['Close'], color='green', label=tick)
+        ceny=data["Close"].to_numpy()
+        x=numpy.arange(len(ceny))
+        datx=data.index.to_numpy()
+        coef = numpy.polyfit(x, ceny, 1)
+        trend = numpy.polyval(coef, x)
+
+        diff = ceny - trend
+
+        upper_shift = numpy.max(diff)
+        lower_shift = numpy.min(diff)
+        upper_channel = trend + upper_shift
+        lower_channel = trend + lower_shift
+
+        # wykres
+        ax.plot(datx,ceny, label="Cena")
+        ax.plot(datx,trend, label="Trend", linewidth=2)
+        ax.plot(datx,upper_channel, "--", label="Górna linia")
+        ax.plot(datx,lower_channel, "--", label="Dolna linia")
+        ax.grid(True)
         ax.set_title("Cena zamknięcia "+tick)
         ax.set_xlabel("Data")
         ax.set_ylabel("Kurs")
-        ax.grid(True)
+        ax.legend()
 
     def chart_data(self,ticF, typD):
         """
