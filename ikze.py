@@ -14,6 +14,7 @@ import pandas as pd
 import numpy
 
 dataDB=[]
+prof=[]
 f_path=os.getcwd()
 if "win" in sys.platform:
     sepa="\\"
@@ -240,6 +241,8 @@ class WykresCanvas(FigureCanvas):
         ax.plot(datx,trend, label="Trend", linewidth=2)
         ax.plot(datx,upper_channel, "--", label="Górna linia")
         ax.plot(datx,lower_channel, "--", label="Dolna linia")
+        data["SMA10"] = data["Close"].rolling(window=10).mean()
+        ax.plot(data["SMA10"], "*-", label="Krocząca")
         ax.grid(True)
         ax.set_title("Cena zamknięcia "+tick)
         ax.set_xlabel("Data")
@@ -498,7 +501,12 @@ class MainWindow(QMainWindow):
         else:
             self.label_wynik.setStyleSheet("color: red;")
         sum2 = "Wynik:" + str(round(resu * 100, 2)) + "%, " + str(net)
-        win.label_wynik.setText(sum2)
+        #self.label_wynik.setText(sum2)
+        param=0
+        for i in range(len(prof)):
+            param+=prof[i]
+        #print(param)
+        self.label_wynik.setText(sum2+"; "+str(round(param,2)))
 
     def list_(self):
         """
@@ -510,6 +518,7 @@ class MainWindow(QMainWindow):
         self.tabela.setRowCount(d_len)
         row = 0
         suma=0
+        global prof
         for dBB in dataDB:
             self.tabela.setItem(row, 0, QtWidgets.QTableWidgetItem(dBB["id"]))
             self.tabela.setItem(row, 1, QtWidgets.QTableWidgetItem(dBB["date"]))
@@ -543,6 +552,10 @@ class MainWindow(QMainWindow):
                 font = QFont()
                 font.setBold(True)
                 change = float(dBB["vol"])*float(dBB["curs"])-float(elem[0])
+                if dBB["cur"]!='PLN':
+                    prof.append(change*getCur(dBB["cur"],'sell'))
+                else:
+                    prof.append(change)
                 item0 = QtWidgets.QTableWidgetItem(str(round(change,2))+" "+dBB["cur"])
                 item0.setFont(font)
                 if change >= 0:
@@ -800,7 +813,10 @@ if res >= 0:
 else:
     win.label_wynik.setStyleSheet("color: red;")
 suma="Wynik:" + str(round(res*100,2))+ "%, " + str(netto)
-win.label_wynik.setText(suma)
+param=0
+for i in range(len(prof)):
+    param+=prof[i]
+win.label_wynik.setText(suma+"; "+str(round(param,2)))
 total=float(win.lineE_cash.text())+float(win.lineE_suma.text())-float(win.lineE_cost.text())
 win.lineE_all.setText(str(round(total,2)))
 try:
