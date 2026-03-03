@@ -500,12 +500,10 @@ class MainWindow(QMainWindow):
             self.label_wynik.setStyleSheet("color: green;")
         else:
             self.label_wynik.setStyleSheet("color: red;")
-        sum2 = "Wynik:" + str(round(resu * 100, 2)) + "%, " + str(net)
-        #self.label_wynik.setText(sum2)
+        sum2 = "Wynik:" + str(round(resu * 100, 2)) + "%, " + str(round(net,2))
         param=0
         for i in range(len(prof)):
             param+=prof[i]
-        #print(param)
         self.label_wynik.setText(sum2+"; "+str(round(param,2)))
 
     def list_(self):
@@ -812,7 +810,7 @@ if res >= 0:
     win.label_wynik.setStyleSheet("color: green;")
 else:
     win.label_wynik.setStyleSheet("color: red;")
-suma="Wynik:" + str(round(res*100,2))+ "%, " + str(netto)
+suma="Wynik:" + str(round(res*100,2))+ "%, " + str(round(netto,2))
 param=0
 for i in range(len(prof)):
     param+=prof[i]
