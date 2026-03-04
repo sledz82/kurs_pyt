@@ -517,6 +517,7 @@ class MainWindow(QMainWindow):
         row = 0
         suma=0
         global prof
+        prof=[]
         for dBB in dataDB:
             self.tabela.setItem(row, 0, QtWidgets.QTableWidgetItem(dBB["id"]))
             self.tabela.setItem(row, 1, QtWidgets.QTableWidgetItem(dBB["date"]))
